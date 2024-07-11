@@ -47,7 +47,7 @@ public:
 
 protected:
   /* Parameter manager object. */
-  params_manager::PManager::SharedPtr pmanager_;
+  params_manager::Manager::SharedPtr pmanager_;
 };
 
 } // namespace dua_node

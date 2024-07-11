@@ -40,7 +40,7 @@ NodeBase::NodeBase(
 : Node(node_name, opts)
 {
   // Create and initialize Parameter Manager object
-  pmanager_ = std::make_shared<ParamsManager::PManager>(this, verbose);
+  pmanager_ = std::make_shared<params_manager::Manager>(this, verbose);
 }
 
 /**
