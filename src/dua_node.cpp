@@ -27,12 +27,6 @@
 namespace dua_node
 {
 
-/**
- * Constructor.
- *
- * @param node_name Name of the node.
- * @param opts Node options.
- */
 NodeBase::NodeBase(
   std::string && node_name,
   const rclcpp::NodeOptions & opts,
@@ -43,13 +37,20 @@ NodeBase::NodeBase(
   pmanager_ = std::make_shared<params_manager::Manager>(this, verbose);
 }
 
-/**
- * Destructor.
- */
 NodeBase::~NodeBase()
 {
   // Destroy Parameter Manager object
   pmanager_.reset();
+}
+
+NodeBase::SharedPtr NodeBase::shared_from_this()
+{
+  return std::static_pointer_cast<NodeBase>(rclcpp::Node::shared_from_this());
+}
+
+NodeBase::ConstSharedPtr NodeBase::shared_from_this() const
+{
+  return std::static_pointer_cast<const NodeBase>(rclcpp::Node::shared_from_this());
 }
 
 } // namespace dua_node

@@ -27,6 +27,8 @@
 
 #include "visibility_control.h"
 
+#include <memory>
+
 #include <rclcpp/rclcpp.hpp>
 
 #include <params_manager/params_manager.hpp>
@@ -40,10 +42,40 @@ namespace dua_node
 class DUA_NODE_PUBLIC NodeBase : public rclcpp::Node
 {
 public:
+  using SharedPtr = std::shared_ptr<NodeBase>;
+  using WeakPtr = std::weak_ptr<NodeBase>;
+  using UniquePtr = std::unique_ptr<NodeBase>;
+  using ConstSharedPtr = std::shared_ptr<const NodeBase>;
+  using ConstWeakPtr = std::weak_ptr<const NodeBase>;
+
+  /**
+   * Constructor.
+   *
+   * @param node_name Name of the node.
+   * @param opts Node options.
+   */
   NodeBase(std::string && node_name,
     const rclcpp::NodeOptions & opts = rclcpp::NodeOptions(),
     bool verbose = false);
+
+  /**
+   * Destructor.
+   */
   ~NodeBase();
+
+  /**
+   * @brief Get a shared_ptr to this instance.
+   *
+   * @return Shared pointer to this instance.
+   */
+  NodeBase::SharedPtr shared_from_this();
+
+  /**
+   * @brief Get a const shared_ptr to this instance.
+   *
+   * @return Const shared pointer to this instance.
+   */
+  NodeBase::ConstSharedPtr shared_from_this() const;
 
 protected:
   /* Parameter manager object. */
