@@ -22,7 +22,7 @@
  * limitations under the License.
  */
 
-#include <dua_node/dua_node.hpp>
+#include <dua_node_cpp/dua_node.hpp>
 
 namespace dua_node
 {
