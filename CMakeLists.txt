@@ -19,7 +19,7 @@ endif()
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(params_manager REQUIRED)
+find_package(params_manager_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 
 # DUA Node library configuration
@@ -31,7 +31,7 @@ target_include_directories(duanode PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 ament_target_dependencies(duanode
-  params_manager
+  params_manager_cpp
   rclcpp)
 
 # Library installation
@@ -61,7 +61,7 @@ endif()
 # Export all dependencies and library targets for this package
 ament_export_targets(dua_nodeTargets HAS_LIBRARY_TARGET)
 ament_export_dependencies(
-  params_manager
+  params_manager_cpp
   rclcpp)
 
 ament_package()

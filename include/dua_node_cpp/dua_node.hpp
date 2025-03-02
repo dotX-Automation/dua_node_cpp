@@ -31,7 +31,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <params_manager/params_manager.hpp>
+#include <params_manager_cpp/params_manager.hpp>
 
 namespace dua_node
 {
