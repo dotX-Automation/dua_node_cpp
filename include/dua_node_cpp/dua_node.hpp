@@ -308,7 +308,7 @@ protected:
         feedback_callback,
         wait);
     if (verbose_) {
-      RCLCPP_INFO(get_logger(), "[ACTION CLN] '%s'", get_entity_fqn(action_name).c_str());
+      RCLCPP_INFO(get_logger(), "[ACTION CLN] '%s'", client->get_action_name().c_str());
     }
     return client;
   }
