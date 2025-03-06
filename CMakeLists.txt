@@ -19,8 +19,12 @@ endif()
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(dua_qos_cpp REQUIRED)
 find_package(params_manager_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(simple_actionclient_cpp REQUIRED)
+find_package(simple_serviceclient_cpp REQUIRED)
 
 # DUA Node library configuration
 add_library(duanode SHARED
@@ -31,8 +35,12 @@ target_include_directories(duanode PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 ament_target_dependencies(duanode
+  dua_qos_cpp
   params_manager_cpp
-  rclcpp)
+  rclcpp
+  rclcpp_action
+  simple_actionclient_cpp
+  simple_serviceclient_cpp)
 
 # Library installation
 install(
@@ -61,7 +69,11 @@ endif()
 # Export all dependencies and library targets for this package
 ament_export_targets(dua_nodeTargets HAS_LIBRARY_TARGET)
 ament_export_dependencies(
+  dua_qos_cpp
   params_manager_cpp
-  rclcpp)
+  rclcpp
+  rclcpp_action
+  simple_actionclient_cpp
+  simple_serviceclient_cpp)
 
 ament_package()
