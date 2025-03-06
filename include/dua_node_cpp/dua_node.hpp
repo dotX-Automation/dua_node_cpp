@@ -22,8 +22,7 @@
  * limitations under the License.
  */
 
-#ifndef DUA_NODE__DUA_NODE_HPP_
-#define DUA_NODE__DUA_NODE_HPP_
+#pragma once
 
 #include "visibility_control.h"
 
@@ -78,10 +77,116 @@ public:
   NodeBase::ConstSharedPtr shared_from_this() const;
 
 protected:
+  /**
+   * @brief Initializes the node calling internal initializers.
+   */
+  void init_node();
+
+  /**
+   * @brief Initializes the node parameters (must be overridden).
+   */
+  virtual void init_parameters()
+  {}
+
+  /**
+   * @brief Initializes the node callback groups (must be overridden).
+   */
+  virtual void init_cgroups()
+  {}
+
+  /**
+   * @brief Initializes the node timers (must be overridden).
+   */
+  virtual void init_timers()
+  {}
+
+  /**
+   * @brief Initializes the node subscribers (must be overridden).
+   */
+  virtual void init_subscribers()
+  {}
+
+  /**
+   * @brief Initializes the node publishers (must be overridden).
+   */
+  virtual void init_publishers()
+  {}
+
+  /**
+   * @brief Initializes the node service servers (must be overridden).
+   */
+  virtual void init_service_servers()
+  {}
+
+  /**
+   * @brief Initializes the node service clients (must be overridden).
+   */
+  virtual void init_service_clients()
+  {}
+
+  /**
+   * @brief Initializes the node action servers (must be overridden).
+   */
+  virtual void init_action_servers()
+  {}
+
+  /**
+   * @brief Initializes the node action clients (must be overridden).
+   */
+  virtual void init_action_clients()
+  {}
+
   /* Parameter manager object. */
   params_manager::Manager::SharedPtr pmanager_;
+
+private:
+    /**
+     * @brief Initializes node parameters.
+     */
+    void dua_init_parameters();
+
+    /**
+     * @brief Initializes callback groups.
+     */
+    void dua_init_cgroups();
+
+    /**
+     * @brief Initializes timers.
+     */
+    void dua_init_timers();
+
+    /**
+     * @brief Initializes subscribers.
+     */
+    void dua_init_subscribers();
+
+    /**
+     * @brief Initializes publishers.
+     */
+    void dua_init_publishers();
+
+    /**
+     * @brief Initializes service servers.
+     */
+    void dua_init_service_servers();
+
+    /**
+     * @brief Initializes service clients.
+     */
+    void dua_init_service_clients();
+
+    /**
+     * @brief Initializes actions servers.
+     */
+    void dua_init_action_servers();
+
+    /**
+     * @brief Initializes actions clients.
+     */
+    void dua_init_action_clients();
+
+    /* Verbosity flag. */
+    bool verbose_ = false;
 };
 
 } // namespace dua_node
-
-#endif // DUA_NODE__DUA_NODE_HPP_

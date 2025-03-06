@@ -31,7 +31,8 @@ NodeBase::NodeBase(
   std::string && node_name,
   const rclcpp::NodeOptions & opts,
   bool verbose)
-: Node(node_name, opts)
+: Node(node_name, opts),
+  verbose_(verbose)
 {
   // Create and initialize Parameter Manager object
   pmanager_ = std::make_shared<params_manager::Manager>(this, verbose);
@@ -41,6 +42,88 @@ NodeBase::~NodeBase()
 {
   // Destroy Parameter Manager object
   pmanager_.reset();
+}
+
+void NodeBase::init_node()
+{
+  dua_init_parameters();
+  dua_init_cgroups();
+  dua_init_timers();
+  dua_init_subscribers();
+  dua_init_publishers();
+  dua_init_service_servers();
+  dua_init_service_clients();
+  dua_init_action_servers();
+  dua_init_action_clients();
+}
+
+void NodeBase::dua_init_parameters()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Parameters:");
+  }
+  init_parameters();
+}
+
+void NodeBase::dua_init_cgroups()
+{
+  init_cgroups();
+}
+
+void NodeBase::dua_init_timers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Timers:");
+  }
+  init_timers();
+}
+
+void NodeBase::dua_init_subscribers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Subscribers:");
+  }
+  init_subscribers();
+}
+
+void NodeBase::dua_init_publishers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Publishers:");
+  }
+  init_publishers();
+}
+
+void NodeBase::dua_init_service_servers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Service servers:");
+  }
+  init_service_servers();
+}
+
+void NodeBase::dua_init_service_clients()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Service clients:");
+  }
+  init_service_clients();
+}
+
+void NodeBase::dua_init_action_servers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Action servers:");
+  }
+  init_action_servers();
+}
+
+void NodeBase::dua_init_action_clients()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "Action clients:");
+  }
+  init_action_clients();
 }
 
 NodeBase::SharedPtr NodeBase::shared_from_this()
