@@ -31,7 +31,8 @@ NodeBase::NodeBase(
   std::string && node_name,
   const rclcpp::NodeOptions & opts,
   bool verbose)
-: Node(node_name, opts)
+: Node(node_name, opts),
+  verbose_(verbose)
 {
   // Create and initialize Parameter Manager object
   pmanager_ = std::make_shared<params_manager::Manager>(this, verbose);
@@ -41,6 +42,98 @@ NodeBase::~NodeBase()
 {
   // Destroy Parameter Manager object
   pmanager_.reset();
+}
+
+void NodeBase::dua_init_node()
+{
+  dua_init_parameters();
+  dua_init_cgroups();
+  dua_init_timers();
+  dua_init_subscribers();
+  dua_init_publishers();
+  dua_init_service_servers();
+  dua_init_service_clients();
+  dua_init_action_servers();
+  dua_init_action_clients();
+}
+
+void NodeBase::dua_init_parameters()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- PARAMETERS ---");
+  }
+  init_parameters();
+}
+
+void NodeBase::dua_init_cgroups()
+{
+  init_cgroups();
+}
+
+void NodeBase::dua_init_timers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- TIMERS ---");
+  }
+  init_timers();
+}
+
+void NodeBase::dua_init_subscribers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- SUBSCRIBERS ---");
+  }
+  init_subscribers();
+}
+
+void NodeBase::dua_init_publishers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- PUBLISHERS ---");
+  }
+  init_publishers();
+}
+
+void NodeBase::dua_init_service_servers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- SERVICE SERVERS ---");
+  }
+  init_service_servers();
+}
+
+void NodeBase::dua_init_service_clients()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- SERVICE CLIENTS ---");
+  }
+  init_service_clients();
+}
+
+void NodeBase::dua_init_action_servers()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- ACTION SERVERS ---");
+  }
+  init_action_servers();
+}
+
+void NodeBase::dua_init_action_clients()
+{
+  if (verbose_) {
+    RCLCPP_INFO(get_logger(), "--- ACTION CLIENTS ---");
+  }
+  init_action_clients();
+}
+
+std::string NodeBase::get_entity_fqn(std::string entity_name)
+{
+  std::string ns = std::string(get_fully_qualified_name());
+  size_t pos = entity_name.find_last_of("/");
+  if (pos != std::string::npos) {
+    entity_name = entity_name.substr(pos + 1);
+  }
+  return ns + "/" + entity_name;
 }
 
 NodeBase::SharedPtr NodeBase::shared_from_this()
