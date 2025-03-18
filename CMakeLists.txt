@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 project(dua_node_cpp)
 
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
@@ -27,13 +27,13 @@ find_package(simple_actionclient_cpp REQUIRED)
 find_package(simple_serviceclient_cpp REQUIRED)
 
 # DUA Node library configuration
-add_library(duanode SHARED
-  src/dua_node.cpp)
+add_library(duanode SHARED src/dua_node.cpp)
+add_library(dua_node_cpp::dua_node_cpp ALIAS duanode)
 target_compile_features(duanode PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 target_compile_definitions(duanode PRIVATE "DUA_NODE_BUILDING_LIBRARY")
 target_include_directories(duanode PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 ament_target_dependencies(duanode
   dua_qos_cpp
   params_manager_cpp
@@ -48,7 +48,7 @@ install(
   DESTINATION include)
 install(
   TARGETS duanode
-  EXPORT dua_nodeTargets
+  EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -67,7 +67,7 @@ if(BUILD_TESTING)
 endif()
 
 # Export all dependencies and library targets for this package
-ament_export_targets(dua_nodeTargets HAS_LIBRARY_TARGET)
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(
   dua_qos_cpp
   params_manager_cpp
