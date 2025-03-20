@@ -86,12 +86,6 @@ public:
    */
   NodeBase::ConstSharedPtr shared_from_this() const;
 
-protected:
-  /**
-   * @brief Initializes the node calling internal initializers.
-   */
-  void dua_init_node();
-
   /**
    * @brief Wraps creation of a timer.
    *        This observes the ROS clock, be it system time or externally supplied.
@@ -332,6 +326,12 @@ protected:
   {
     return create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   }
+
+protected:
+  /**
+   * @brief Initializes the node calling internal initializers.
+   */
+  void dua_init_node();
 
   /**
    * @brief Initializes the node parameters (must be overridden).
