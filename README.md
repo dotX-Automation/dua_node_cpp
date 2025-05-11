@@ -6,7 +6,7 @@ C++ base class library that extends the base `rclcpp::Node` providing direct and
 
 This library provides the new `dua_node::NodeBase` base ROS 2 node class that implements the following features.
 
-- [x] Automatic initialization of an embedded `PManager` object to manage node parameters from the [`params_manager_cpp`](https://github.com/dotX-Automation/params_manager_cpp/blob/master/README.md) library. This way, one only needs to define and call `init_parameters` in the node class constructor to automatically declare and set up the parameters.
+- [x] Automatic initialization of an embedded `PManager` object to manage node parameters from the [`params_manager_cpp`](https://github.com/dotX-Automation/params_manager_cpp/blob/master/README.md) library. This way, one only needs to define `init_parameters` in the node class to automatically declare and set up the parameters.
 
 ## Usage
 
