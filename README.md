@@ -4,16 +4,16 @@ C++ base class library that extends the base `rclcpp::Node` providing direct and
 
 ## Contents
 
-This library provides the new `dua_node::NodeBase` base ROS 2 node class that implements the following features:
+This library provides the new `dua_node::NodeBase` base ROS 2 node class that implements the following features.
 
-- [x] Automatic initialization of an embedded `PManager` object to manage node parameters from the [`params_manager_cpp`](https://github.com/dotX-Automation/params_manager/README.md) library. This way, one only needs to define and call `init_parameters` in the node class constructor to automatically declare and set up the parameters.
+- [x] Automatic initialization of an embedded `PManager` object to manage node parameters from the [`params_manager_cpp`](https://github.com/dotX-Automation/params_manager_cpp/blob/master/README.md) library. This way, one only needs to define and call `init_parameters` in the node class constructor to automatically declare and set up the parameters.
 
 ## Usage
 
-Just include the `dua_node.hpp` header file in your node class, and inherit from the `dua_node::NodeBase` class. The constructor accepts the following arguments:
+Just include the `dua_node.hpp` header file in your node class, and inherit from the `dua_node::NodeBase` class. The constructor accepts the following arguments.
 
-- `std::string && node_name`: the name of the node;
-- `const rclcpp::NodeOptions & opts`: the node options object, defaults to `rclcpp::NodeOptions()`;
+- `std::string && node_name`: the name of the node.
+- `const rclcpp::NodeOptions & opts`: the node options object, defaults to `rclcpp::NodeOptions()`.
 - `verbose`: a boolean flag that enables verbose logs in various utils, defaults to `false`.
 
 ---
