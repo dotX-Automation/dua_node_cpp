@@ -327,6 +327,42 @@ public:
     return create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   }
 
+  /**
+   * @brief Checks if a given frame ID corresponds to the global frame, applying conventions.
+   *
+   * @param frame_id Frame ID to check.
+   * @param frame_prefix Frame prefix to consider (including trailing slash).
+   * @return Yes or no.
+   */
+  [[nodiscard]] inline bool check_frame_global(const std::string & frame_id, const std::string & frame_prefix = "") const
+  {
+    return frame_id == frame_prefix + "map" || frame_id == frame_prefix + "world";
+  }
+
+  /**
+   * @brief Checks if a given frame ID corresponds to the local frame, applying conventions.
+   *
+   * @param frame_id Frame ID to check.
+   * @param frame_prefix Frame prefix to consider (including trailing slash).
+   * @return Yes or no.
+   */
+  [[nodiscard]] inline bool check_frame_local(const std::string & frame_id, const std::string & frame_prefix = "") const
+  {
+    return frame_id == frame_prefix + "odom";
+  }
+
+  /**
+   * @brief Checks if a given frame ID corresponds to the body frame, applying conventions.
+   *
+   * @param frame_id Frame ID to check.
+   * @param frame_prefix Frame prefix to consider (including trailing slash).
+   * @return Yes or no.
+   */
+  [[nodiscard]] inline bool check_frame_body(const std::string & frame_id, const std::string & frame_prefix = "") const
+  {
+    return frame_id == frame_prefix + "base_link";
+  }
+
 protected:
   /**
    * @brief Initializes the node calling internal initializers.
