@@ -331,12 +331,18 @@ public:
    * @brief Checks if a given frame ID corresponds to the global frame, applying conventions.
    *
    * @param frame_id Frame ID to check.
-   * @param frame_prefix Frame prefix to consider (including trailing slash).
    * @return Yes or no.
    */
-  [[nodiscard]] inline bool check_frame_global(const std::string & frame_id, const std::string & frame_prefix = "") const
+  [[nodiscard]] inline bool check_frame_global(const std::string & frame_id) const
   {
-    return frame_id == frame_prefix + "map" || frame_id == frame_prefix + "world";
+    // Check for exact match or frame ending with these suffixes
+    std::size_t map_trail_pos = frame_id.find("/map");
+    std::size_t world_trail_pos = frame_id.find("/world");
+    std::size_t earth_trail_pos = frame_id.find("/earth");
+    return frame_id == "map" || frame_id == "world" || frame_id == "earth" ||
+           map_trail_pos != std::string::npos ||
+           world_trail_pos != std::string::npos ||
+           earth_trail_pos != std::string::npos;
   }
 
   /**
