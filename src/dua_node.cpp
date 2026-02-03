@@ -168,7 +168,7 @@ void NodeBase::dua_init_action_clients()
   init_action_clients();
 }
 
-bool NodeBase::get_transform(
+uint8_t NodeBase::get_transform(
   const std_msgs::msg::Header & source,
   const std_msgs::msg::Header & target,
   geometry_msgs::msg::TransformStamped & transform,
@@ -203,7 +203,7 @@ bool NodeBase::get_transform(
       "GetTransform call error ('%s' -> '%s'): no response",
       source.frame_id.c_str(),
       target.frame_id.c_str());
-    return false;
+    return 0;
   }
   if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::ERROR) {
     RCLCPP_ERROR_THROTTLE(
@@ -212,16 +212,15 @@ bool NodeBase::get_transform(
       source.frame_id.c_str(),
       target.frame_id.c_str(),
       resp->result.error_msg.c_str());
-    return false;
+    return resp->result.result;
   }
-  // FAILED means that the latest TF has been provided instead, so it's generally ok
 
-  // Return the transform
+  // Return the transform and the operation result
   transform = resp->transform;
-  return true;
+  return resp->result.result;
 }
 
-bool NodeBase::transform_pose(
+uint8_t NodeBase::transform_pose(
   const geometry_msgs::msg::PoseStamped & source_pose,
   const std_msgs::msg::Header & target,
   geometry_msgs::msg::PoseStamped & target_pose,
@@ -250,7 +249,7 @@ bool NodeBase::transform_pose(
       "TransformPose call error ('%s' -> '%s'): no response",
       source_pose.header.frame_id.c_str(),
       target.frame_id.c_str());
-    return false;
+    return 0;
   }
   if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::ERROR) {
     RCLCPP_ERROR_THROTTLE(
@@ -259,20 +258,12 @@ bool NodeBase::transform_pose(
       source_pose.header.frame_id.c_str(),
       target.frame_id.c_str(),
       resp->result.error_msg.c_str());
-    return false;
-  }
-  if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::FAILED) {
-    RCLCPP_ERROR_THROTTLE(
-      get_logger(), *get_clock(), 1000,
-      "TransformPose server failure ('%s' -> '%s'): TF not found",
-      source_pose.header.frame_id.c_str(),
-      target.frame_id.c_str());
-    return false;
+    return resp->result.result;
   }
 
   // Return the result
   target_pose = resp->target_pose;
-  return true;
+  return resp->result.result;
 }
 
 std::string NodeBase::get_entity_fqn(std::string entity_name)
