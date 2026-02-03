@@ -19,12 +19,16 @@ endif()
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(dua_common_interfaces REQUIRED)
+find_package(dua_geometry_interfaces REQUIRED)
 find_package(dua_qos_cpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(params_manager_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(simple_actionclient_cpp REQUIRED)
 find_package(simple_serviceclient_cpp REQUIRED)
+find_package(std_msgs REQUIRED)
 
 # DUA Node library configuration
 add_library(duanode SHARED src/dua_node.cpp)
@@ -35,12 +39,16 @@ target_include_directories(duanode PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 ament_target_dependencies(duanode
+  dua_common_interfaces
+  dua_geometry_interfaces
   dua_qos_cpp
+  geometry_msgs
   params_manager_cpp
   rclcpp
   rclcpp_action
   simple_actionclient_cpp
-  simple_serviceclient_cpp)
+  simple_serviceclient_cpp
+  std_msgs)
 
 # Library installation
 install(
@@ -69,11 +77,15 @@ endif()
 # Export all dependencies and library targets for this package
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(
+  dua_common_interfaces
+  dua_geometry_interfaces
   dua_qos_cpp
+  geometry_msgs
   params_manager_cpp
   rclcpp
   rclcpp_action
   simple_actionclient_cpp
-  simple_serviceclient_cpp)
+  simple_serviceclient_cpp
+  std_msgs)
 
 ament_package()
