@@ -62,6 +62,31 @@ void NodeBase::dua_init_parameters()
   if (verbose_) {
     RCLCPP_INFO(get_logger(), "--- PARAMETERS ---");
   }
+
+  // Declare TF server parameters
+  pmanager_->declare_bool_parameter(
+    "dua.tf_server.get_transform",
+    false,
+    "Enable GetTransform client, allows use of standard get_transform API.",
+    "Must remap the service name to a compliant, existing service.",
+    true,
+    &tf_server_get_transform_);
+  pmanager_->declare_bool_parameter(
+    "dua.tf_server.transform_pose",
+    false,
+    "Enable TransformPose client, allows use of standard transform_pose API.",
+    "Must remap the service name to a compliant, existing service.",
+    true,
+    &tf_server_transform_pose_);
+  pmanager_->declare_bool_parameter(
+    "dua.tf_server.wait_servers",
+    false,
+    "Wait for TF servers to be available during node initialization.",
+    "If enabled, the node initialization will block until the TF servers are available.",
+    true,
+    &tf_server_wait_servers_);
+
+  // Declare the rest of the parameters
   init_parameters();
 }
 
@@ -107,6 +132,23 @@ void NodeBase::dua_init_service_clients()
   if (verbose_) {
     RCLCPP_INFO(get_logger(), "--- SERVICE CLIENTS ---");
   }
+
+  // Initialize TF server clients
+  // get_transform
+  if (tf_server_get_transform_) {
+    get_transform_client_ = dua_create_service_client<dua_geometry_interfaces::srv::GetTransform>(
+      "/get_transform",
+      tf_server_wait_servers_);
+  }
+
+  // transform_pose
+  if (tf_server_transform_pose_) {
+    transform_pose_client_ = dua_create_service_client<dua_geometry_interfaces::srv::TransformPose>(
+      "/transform_pose",
+      tf_server_wait_servers_);
+  }
+
+  // Initialize the rest of the clients
   init_service_clients();
 }
 
@@ -124,6 +166,113 @@ void NodeBase::dua_init_action_clients()
     RCLCPP_INFO(get_logger(), "--- ACTION CLIENTS ---");
   }
   init_action_clients();
+}
+
+bool NodeBase::get_transform(
+  const std_msgs::msg::Header & source,
+  const std_msgs::msg::Header & target,
+  geometry_msgs::msg::TransformStamped & transform,
+  bool transform_frames,
+  const rclcpp::Duration & timeout,
+  bool spin,
+  int64_t srv_timeout)
+{
+  // Consistency check
+  if (get_transform_client_== nullptr) {
+    throw std::runtime_error("dua_node::NodeBase::get_transform: client not initialized");
+  }
+
+  // Create the request
+  auto req = std::make_shared<dua_geometry_interfaces::srv::GetTransform::Request>();
+  if (transform_frames) {
+    req->set__source(target);
+    req->set__target(source);
+  } else {
+    req->set__source(source);
+    req->set__target(target);
+  }
+  req->set__timeout(timeout);
+
+  // Send the request
+  auto resp = get_transform_client_->call_sync(req, spin, srv_timeout);
+
+  // Check the response
+  if (resp == nullptr) {
+    RCLCPP_ERROR_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "GetTransform call error ('%s' -> '%s'): no response",
+      source.frame_id.c_str(),
+      target.frame_id.c_str());
+    return false;
+  }
+  if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::ERROR) {
+    RCLCPP_ERROR_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "GetTransform server error ('%s' -> '%s'): %s",
+      source.frame_id.c_str(),
+      target.frame_id.c_str(),
+      resp->result.error_msg.c_str());
+    return false;
+  }
+  // FAILED means that the latest TF has been provided instead, so it's generally ok
+
+  // Return the transform
+  transform = resp->transform;
+  return true;
+}
+
+bool NodeBase::transform_pose(
+  const geometry_msgs::msg::PoseStamped & source_pose,
+  const std_msgs::msg::Header & target,
+  geometry_msgs::msg::PoseStamped & target_pose,
+  const rclcpp::Duration & timeout,
+  bool spin,
+  int64_t srv_timeout)
+{
+  // Consistency check
+  if (transform_pose_client_ == nullptr) {
+    throw std::runtime_error("dua_node::NodeBase::transform_pose: client not initialized");
+  }
+
+  // Create the request
+  auto req = std::make_shared<dua_geometry_interfaces::srv::TransformPose::Request>();
+  req->set__source_pose(source_pose);
+  req->set__target(target);
+  req->set__timeout(timeout);
+
+  // Send the request
+  auto resp = transform_pose_client_->call_sync(req, spin, srv_timeout);
+
+  // Check the response
+  if (resp == nullptr) {
+    RCLCPP_ERROR_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "TransformPose call error ('%s' -> '%s'): no response",
+      source_pose.header.frame_id.c_str(),
+      target.frame_id.c_str());
+    return false;
+  }
+  if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::ERROR) {
+    RCLCPP_ERROR_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "TransformPose server error ('%s' -> '%s'): %s",
+      source_pose.header.frame_id.c_str(),
+      target.frame_id.c_str(),
+      resp->result.error_msg.c_str());
+    return false;
+  }
+  if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::FAILED) {
+    RCLCPP_ERROR_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "TransformPose server failure ('%s' -> '%s'): TF not found",
+      source_pose.header.frame_id.c_str(),
+      target.frame_id.c_str());
+    return false;
+  }
+
+  // Return the result
+  target_pose = resp->target_pose;
+  return true;
 }
 
 std::string NodeBase::get_entity_fqn(std::string entity_name)

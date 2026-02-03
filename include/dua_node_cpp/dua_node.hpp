@@ -28,6 +28,7 @@
 
 #include <chrono>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
@@ -39,6 +40,13 @@
 
 #include <simple_actionclient_cpp/simple_actionclient.hpp>
 #include <simple_serviceclient_cpp/simple_serviceclient.hpp>
+
+#include <dua_common_interfaces/msg/command_result_stamped.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <std_msgs/msg/header.hpp>
+
+#include <dua_geometry_interfaces/srv/get_transform.hpp>
+#include <dua_geometry_interfaces/srv/transform_pose.hpp>
 
 namespace dua_node
 {
@@ -429,8 +437,56 @@ protected:
   virtual void init_action_clients()
   {}
 
+  /**
+   * @brief Requests a transform between two frames.
+   *
+   * @param source Source frame ID and timestamp.
+   * @param target Target frame ID and timestamp.
+   * @param transform Output transform.
+   * @param transform_frames Whether to output the transformation between frames or coordinates.
+   * @param timeout TF lookup timeout.
+   * @param spin Whether to spin the node while waiting for the response.
+   * @param srv_timeout Service call timeout [ms].
+   *
+   * @return True on success, false on failure.
+   * @throws std::runtime_error if the service client is not initialized.
+   */
+  bool get_transform(
+    const std_msgs::msg::Header & source,
+    const std_msgs::msg::Header & target,
+    geometry_msgs::msg::TransformStamped & transform,
+    bool transform_frames = false,
+    const rclcpp::Duration & timeout = rclcpp::Duration::from_seconds(1.0),
+    bool spin = false,
+    int64_t srv_timeout = 0L);
+
+  /**
+   * @brief Requests the transformation of a given Pose from one frame to another.
+   *
+   * @param source_pose Pose to transform.
+   * @param target Target frame ID and timestamp.
+   * @param target_pose Output transformed Pose.
+   * @param timeout TF lookup timeout.
+   * @param spin Whether to spin the node while waiting for the response.
+   * @param srv_timeout Service call timeout [ms].
+   *
+   * @return True on success, false on failure.
+   * @throws std::runtime_error if the service client is not initialized.
+   */
+  bool transform_pose(
+    const geometry_msgs::msg::PoseStamped & source_pose,
+    const std_msgs::msg::Header & target,
+    geometry_msgs::msg::PoseStamped & target_pose,
+    const rclcpp::Duration & timeout = rclcpp::Duration::from_seconds(1.0),
+    bool spin = false,
+    int64_t srv_timeout = 0L);
+
   /* Parameter manager object. */
   params_manager::Manager::SharedPtr pmanager_;
+
+  /* Service clients. */
+  simple_serviceclient::Client<dua_geometry_interfaces::srv::GetTransform>::SharedPtr get_transform_client_ = nullptr;
+  simple_serviceclient::Client<dua_geometry_interfaces::srv::TransformPose>::SharedPtr transform_pose_client_ = nullptr;
 
 private:
   /**
@@ -488,6 +544,11 @@ private:
 
   /* Verbosity flag. */
   bool verbose_ = false;
+
+  /* Internal node parameters. */
+  bool tf_server_get_transform_ = false;
+  bool tf_server_transform_pose_ = false;
+  bool tf_server_wait_servers_ = false;
 };
 
 } // namespace dua_node
