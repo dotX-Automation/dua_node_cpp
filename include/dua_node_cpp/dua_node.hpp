@@ -27,6 +27,7 @@
 #include "visibility_control.h"
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -449,10 +450,10 @@ protected:
    * @param spin Whether to spin the node while waiting for the response.
    * @param srv_timeout Service call timeout [ms].
    *
-   * @return True on success, false on failure.
+   * @return 0 if the server did not respond, else the CommandResultStamped code.
    * @throws std::runtime_error if the service client is not initialized.
    */
-  bool get_transform(
+  uint8_t get_transform(
     const std_msgs::msg::Header & source,
     const std_msgs::msg::Header & target,
     geometry_msgs::msg::TransformStamped & transform,
@@ -471,10 +472,10 @@ protected:
    * @param spin Whether to spin the node while waiting for the response.
    * @param srv_timeout Service call timeout [ms].
    *
-   * @return True on success, false on failure.
+   * @return 0 if the server did not respond, else the CommandResultStamped code.
    * @throws std::runtime_error if the service client is not initialized.
    */
-  bool transform_pose(
+  uint8_t transform_pose(
     const geometry_msgs::msg::PoseStamped & source_pose,
     const std_msgs::msg::Header & target,
     geometry_msgs::msg::PoseStamped & target_pose,
