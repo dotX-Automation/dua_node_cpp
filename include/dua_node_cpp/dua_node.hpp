@@ -43,6 +43,7 @@
 
 #include <dua_common_interfaces/msg/command_result_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <geometry_msgs/msg/transform_stamped.hpp>
 #include <std_msgs/msg/header.hpp>
 
 #include <dua_geometry_interfaces/srv/get_transform.hpp>
