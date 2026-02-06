@@ -203,7 +203,7 @@ uint8_t NodeBase::get_transform(
       "GetTransform call error ('%s' -> '%s'): no response",
       source.frame_id.c_str(),
       target.frame_id.c_str());
-    return 0;
+    return dua_common_interfaces::msg::CommandResultStamped::TIMEOUT;
   }
   if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::ERROR) {
     RCLCPP_ERROR_THROTTLE(
@@ -249,7 +249,7 @@ uint8_t NodeBase::transform_pose(
       "TransformPose call error ('%s' -> '%s'): no response",
       source_pose.header.frame_id.c_str(),
       target.frame_id.c_str());
-    return 0;
+    return dua_common_interfaces::msg::CommandResultStamped::TIMEOUT;
   }
   if (resp->result.result == dua_common_interfaces::msg::CommandResultStamped::ERROR) {
     RCLCPP_ERROR_THROTTLE(
